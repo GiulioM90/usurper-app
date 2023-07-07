@@ -14,7 +14,25 @@ import VolumeDownRounded from '@mui/icons-material/VolumeDownRounded';
 
 
 import useSound from "use-sound";
-import qala from "../assets/cyrcleofthetyrants.mpeg";
+import {Howl, Howler} from 'howler';
+
+const songs = [
+  {
+    id: 1,
+    title: "Usurper",
+    file: require("../assets/usurper.mpeg"),
+  },
+  {
+    id: 2,
+    title: "Babylon Fell",
+    file: require("../assets/babylonfell.mpeg"),
+  },
+  {
+    id: 3,
+    title: "Cyrcle of the Thyrants",
+    file: require("../assets/cyrcleofthetyrants.mpeg"),
+  },
+];
 
 const WallPaper = styled('div')({
   position: 'absolute',
@@ -23,7 +41,7 @@ const WallPaper = styled('div')({
   top: 0,
   left: 0,
   overflow: 'hidden',
-  background: 'linear-gradient(rgb(255, 38, 142) 0%, rgb(255, 105, 79) 100%)',
+  background: 'linear-gradient(rgb(255, 255, 255) 0%, rgb(0, 0, 0) 100%)',
   transition: 'all 500ms cubic-bezier(0.175, 0.885, 0.32, 1.275) 0s',
   '&:before': {
     content: '""',
@@ -32,8 +50,7 @@ const WallPaper = styled('div')({
     position: 'absolute',
     top: '-40%',
     right: '-50%',
-    background:
-      'radial-gradient(at center center, rgb(62, 79, 249) 0%, rgba(62, 79, 249, 0) 64%)',
+    background: 'radial-gradient(at center center, rgb(255, 0, 0) 0%, rgba(255, 0, 0, 0) 64%)',
   },
   '&:after': {
     content: '""',
@@ -43,7 +60,7 @@ const WallPaper = styled('div')({
     bottom: '-50%',
     left: '-30%',
     background:
-      'radial-gradient(at center center, rgb(247, 237, 225) 0%, rgba(247, 237, 225, 0) 70%)',
+      'radial-gradient(at center center, rgb(0, 0, 0) 0%, rgba(0, 0, 0, 0) 70%)',
     transform: 'rotate(30deg)',
   },
 });
@@ -83,59 +100,89 @@ const TinyText = styled(Typography)({
 
 export default function MusicPlayerSlider() {
 
-    
-const [isPlaying, setIsPlaying] = useState(false);
-const [time, setTime] = useState({
-  min: "",
-  sec: ""
-});
-const [currTime, setCurrTime] = useState({
-  min: "",
-  sec: ""
-});
+  const [currentSongIndex, setCurrentSongIndex] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const currentSong = songs[currentSongIndex];
+  // const [play, { stop, pause, duration, sound }] = useSound(currentSong.file);
+  const [time, setTime] = useState({ min: '', sec: '' });
+  const [currTime, setCurrTime] = useState({ min: '', sec: '' });
+  const [seconds, setSeconds] = useState();
+  const [paused, setPaused] = useState(true);
+  const [sound, setSound] = useState(null);
 
-const [seconds, setSeconds] = useState();
-
-const [play, { pause, duration, sound }] = useSound(qala);
-const [paused, setPaused] = useState(true);
-useEffect(() => {
-  if (duration) {
-    const sec = duration / 1000;
-    const min = Math.floor(sec / 60);
-    const secRemain = Math.floor(sec % 60);
-    setTime({
-      min: min,
-      sec: secRemain
-    });
-  }
-}, [isPlaying]);
-
-useEffect(() => {
-  const interval = setInterval(() => {
-    if (sound) {
-      setSeconds(sound.seek([]));
-      const min = Math.floor(sound.seek([]) / 60);
-      const sec = Math.floor(sound.seek([]) % 60);
-      setCurrTime({
-        min,
-        sec
+  useEffect(() => {
+    if (currentSong) {
+      const newSound = new Howl({
+        src: currentSong.file,
+        onplay: () => setIsPlaying(true),
+        onpause: () => setIsPlaying(false),
+        onend: () => setIsPlaying(false),
+        onload: () => {
+          const sec = newSound.duration() / 1000;
+          const min = Math.floor(sec / 60);
+          const secRemain = Math.floor(sec % 60);
+          setTime({ min, sec: secRemain });
+        },
+        onplayerror: () => {
+          console.error('Failed to play audio');
+        },
       });
+      setSound(newSound);
     }
-  }, 1000);
-  return () => clearInterval(interval);
-}, [sound]);
+  }, [currentSong]);
 
-const playingButton = () => {
-  if (isPlaying) {
-    pause();
-    setIsPlaying(false);
-    setPaused(true)
-  } else {
-    play();
+  useEffect(() => {
+    if (sound) {
+      const interval = setInterval(() => {
+        if (sound.playing()) {
+          setSeconds(sound.seek());
+          const min = Math.floor(sound.seek() / 60);
+          const sec = Math.floor(sound.seek() % 60);
+          setCurrTime({ min, sec });
+        }
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [sound]);
+
+
+  const handleNextSong = () => {
+    const nextIndex = (currentSongIndex + 1) % songs.length;
+    setCurrentSongIndex(nextIndex);
+    if (sound) {
+      sound.stop();
+    }
     setIsPlaying(true);
-    setPaused(false)
-  }
-};
+  };
+  
+  const handlePreviousSong = () => {
+    const previousIndex = (currentSongIndex - 1 + songs.length) % songs.length;
+    setCurrentSongIndex(previousIndex);
+    if (sound) {
+      sound.stop();
+    }
+    setIsPlaying(true);
+  };
+
+  const playingButton = () => {
+    if (isPlaying) {
+      if (sound.playing()) {
+        sound.pause();
+      } else {
+        sound.play();
+      }
+      setIsPlaying(false);
+      setPaused(true);
+    } else {
+      if (sound.playing()) {
+        sound.pause();
+      } else {
+        sound.play();
+      }
+      setIsPlaying(true);
+      setPaused(false);
+    }
+  };
 
   const theme = useTheme();
 //   const duration = 200; // seconds
@@ -155,7 +202,7 @@ const playingButton = () => {
           <CoverImage>
             <img
               alt="immagine canzone selezionata"
-              src="https://picsum.photos/200/200"
+              src="./usurperlogo.jpeg"
             />
           </CoverImage>
           <Box sx={{ ml: 1.5, minWidth: 0 }}>
@@ -166,13 +213,13 @@ const playingButton = () => {
               <b>Usurper</b>
             </Typography>
             <Typography noWrap letterSpacing={-0.25}>
-              Cyrcle of The Tyrants
+              {currentSong.title}
             </Typography>
           </Box>
         </Box>
         <Slider
           defaultValue="0"
-          max={duration / 1000} 
+          // max={duration / 1000} 
           aria-label="Default" 
           value={seconds} 
           onChange={(e) => {sound.seek([e.target.value]);}} 
@@ -223,7 +270,7 @@ const playingButton = () => {
           }}
         >
           <IconButton aria-label="previous song">
-            <FastRewindRounded fontSize="large" htmlColor={mainIconColor} />
+            <FastRewindRounded fontSize="large" htmlColor={mainIconColor} onClick={handleNextSong}/>
           </IconButton>
           <IconButton
             aria-label={paused ? 'play' : 'pause'}
@@ -239,7 +286,7 @@ const playingButton = () => {
             )}
           </IconButton>
           <IconButton aria-label="next song">
-            <FastForwardRounded fontSize="large" htmlColor={mainIconColor} />
+            <FastForwardRounded fontSize="large" htmlColor={mainIconColor} onClick={handlePreviousSong}/>
           </IconButton>
         </Box>
         <Stack spacing={2} direction="row" sx={{ mb: 1, px: 1 }} alignItems="center">
