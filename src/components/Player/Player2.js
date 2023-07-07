@@ -20,17 +20,17 @@ const songs = [
   {
     id: 1,
     title: "Usurper",
-    file: require("../assets/usurper.mpeg"),
+    file: require("./usurper.mpeg"),
   },
   {
     id: 2,
     title: "Babylon Fell",
-    file: require("../assets/babylonfell.mpeg"),
+    file: require("./babylonfell.mpeg"),
   },
   {
     id: 3,
     title: "Cyrcle of the Thyrants",
-    file: require("../assets/cyrcleofthetyrants.mpeg"),
+    file: require("./cyrcleofthetyrants.mpeg"),
   },
 ];
 
