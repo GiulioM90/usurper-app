@@ -1,6 +1,4 @@
-import logo from './logo.svg';
-import Home from './components/Home/Home'
-import Page from './components/utils/Player'
+import Page from './components/Player/Player2'
 import './App.css';
 
 function App() {
