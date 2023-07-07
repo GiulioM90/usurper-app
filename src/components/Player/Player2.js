@@ -70,9 +70,11 @@ const Widget = styled('div')(({ theme }) => ({
   borderRadius: 16,
   width: 343,
   maxWidth: '100%',
+  height:'70vh',
   margin: 'auto',
   position: 'relative',
   zIndex: 1,
+  marginTop: 'auto',
   backgroundColor:
     theme.palette.mode === 'dark' ? 'rgba(0,0,0,0.6)' : 'rgba(255,255,255,0.4)',
   backdropFilter: 'blur(40px)',
@@ -112,8 +114,10 @@ export default function MusicPlayerSlider() {
 
   useEffect(() => {
     if (currentSong) {
+      console.log(currentSong)
       const newSound = new Howl({
         src: currentSong.file,
+        html5: true,
         onplay: () => setIsPlaying(true),
         onpause: () => setIsPlaying(false),
         onend: () => setIsPlaying(false),
@@ -147,24 +151,35 @@ export default function MusicPlayerSlider() {
 
 
   const handleNextSong = () => {
+    if (isPlaying) {
+      if (sound.playing()) {
+        sound.stop();
+      } else {
+        sound.play();
+      }
+      setIsPlaying(false);
+      setPaused(true);
+    }
     const nextIndex = (currentSongIndex + 1) % songs.length;
     setCurrentSongIndex(nextIndex);
-    if (sound) {
-      sound.stop();
-    }
-    setIsPlaying(true);
   };
   
   const handlePreviousSong = () => {
+    if (isPlaying) {
+      if (sound.playing()) {
+        sound.stop();
+      } else {
+        sound.play();
+      }
+      setIsPlaying(false);
+      setPaused(true);
+    }
     const previousIndex = (currentSongIndex - 1 + songs.length) % songs.length;
     setCurrentSongIndex(previousIndex);
-    if (sound) {
-      sound.stop();
-    }
-    setIsPlaying(true);
   };
 
   const playingButton = () => {
+    console.log(currentSong)
     if (isPlaying) {
       if (sound.playing()) {
         sound.pause();
@@ -196,7 +211,7 @@ export default function MusicPlayerSlider() {
   const lightIconColor =
     theme.palette.mode === 'dark' ? 'rgba(255,255,255,0.4)' : 'rgba(0,0,0,0.4)';
   return (
-    <Box sx={{ width: '100%', overflow: 'hidden' }}>
+    <Box sx={{ width: '100%', overflow: 'hidden', display: 'flex', height:'100vh' }}>
       <Widget>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
           <CoverImage>
@@ -217,12 +232,12 @@ export default function MusicPlayerSlider() {
             </Typography>
           </Box>
         </Box>
-        <Slider
+        {/* <Slider
           defaultValue="0"
-          // max={duration / 1000} 
+          max={sound && sound.duration() || 0}
           aria-label="Default" 
           value={seconds} 
-          onChange={(e) => {sound.seek([e.target.value]);}} 
+          onChange={(e) => {sound.seek(e.target.value);}} 
           sx={{
             color: theme.palette.mode === 'dark' ? '#fff' : 'rgba(0,0,0,0.87)',
             height: 4,
@@ -249,7 +264,7 @@ export default function MusicPlayerSlider() {
               opacity: 0.28,
             },
           }}
-        />
+        /> */}
         <Box
           sx={{
             display: 'flex',
@@ -258,8 +273,8 @@ export default function MusicPlayerSlider() {
             mt: -2,
           }}
         >
+          <TinyText>-{time.sec}:{time.sec}</TinyText>
           <TinyText>{currTime.min}:{currTime.sec}</TinyText>
-          <TinyText>-{time.min}:{time.sec}</TinyText>
         </Box>
         <Box
           sx={{
@@ -270,7 +285,7 @@ export default function MusicPlayerSlider() {
           }}
         >
           <IconButton aria-label="previous song">
-            <FastRewindRounded fontSize="large" htmlColor={mainIconColor} onClick={handleNextSong}/>
+            <FastRewindRounded fontSize="large" htmlColor={mainIconColor} onClick={handlePreviousSong}/>
           </IconButton>
           <IconButton
             aria-label={paused ? 'play' : 'pause'}
@@ -286,10 +301,10 @@ export default function MusicPlayerSlider() {
             )}
           </IconButton>
           <IconButton aria-label="next song">
-            <FastForwardRounded fontSize="large" htmlColor={mainIconColor} onClick={handlePreviousSong}/>
+            <FastForwardRounded fontSize="large" htmlColor={mainIconColor} onClick={handleNextSong}/>
           </IconButton>
         </Box>
-        <Stack spacing={2} direction="row" sx={{ mb: 1, px: 1 }} alignItems="center">
+        {/* <Stack spacing={2} direction="row" sx={{ mb: 1, px: 1 }} alignItems="center">
           <VolumeDownRounded htmlColor={lightIconColor} />
           <Slider
             aria-label="Volume"
@@ -313,7 +328,7 @@ export default function MusicPlayerSlider() {
             }}
           />
           <VolumeUpRounded htmlColor={lightIconColor} />
-        </Stack>
+        </Stack> */}
       </Widget>
       <WallPaper />
     </Box>

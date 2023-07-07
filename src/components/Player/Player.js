@@ -105,7 +105,7 @@ export default function Player() {
               <Item>{time.min}:{time.sec}</Item>
             </Grid>
           </Grid>
-          <Slider defaultValue="0" aria-label="Default" value={seconds} onChange={(e) => {sound.seek([e.target.value]);}} />
+          <Slider defaultValue="0" aria-label="Default" valueLabelDisplay="auto" value={seconds} onChange={(e) => {sound.seek([e.target.value]);}} />
           <CardActions>
             <Button size="small">Learn More</Button>
           </CardActions>
