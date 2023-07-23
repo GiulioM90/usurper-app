@@ -3,7 +3,7 @@ import { styled } from '@mui/material/styles';
 import { CssBaseline, Container, Box, Card, CardActions, CardContent, CardMedia, Button, Typography, Grid, Paper, Slider } from '@mui/material';
 
 import useSound from "use-sound";
-import qala from "./cyrcleofthetyrants.mpeg";
+import qala from "../assets/cyrcleofthetyrants.mpeg";
 import { AiFillPlayCircle, AiFillPauseCircle } from "react-icons/ai";
 import { BiSkipNext, BiSkipPrevious } from "react-icons/bi";
 import { IconContext } from "react-icons";

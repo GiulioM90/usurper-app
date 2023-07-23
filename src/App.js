@@ -1,4 +1,4 @@
-import Page from './components/Player/Player2'
+import Page from './components/Player/Player3'
 import './App.css';
 
 function App() {
