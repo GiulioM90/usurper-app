@@ -104,12 +104,12 @@ export default function MusicPlayerSlider() {
   const [currentSongIndex, setCurrentSongIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const currentSong = songs[currentSongIndex];
-  const [play, { stop, pause, duration, seek }] = useSound(currentSong.file);
+  const [play, { stop, pause, sound, duration, seek }] = useSound(currentSong.file);
   const [time, setTime] = useState({ min: '', sec: '' });
   const [currTime, setCurrTime] = useState({ min: '', sec: '' });
   const [seconds, setSeconds] = useState();
   const [paused, setPaused] = useState(true);
-  const [sound, setSound] = useState(null);
+//   const [sound, setSound] = useState(null);
 
 //   useEffect(() => {
 //     if (currentSong) {
@@ -133,20 +133,28 @@ export default function MusicPlayerSlider() {
 //       setSound(newSound);
 //     }
 //   }, [currentSong]);
-
-//   useEffect(() => {
-//     if (sound) {
-//       const interval = setInterval(() => {
-//         if (sound.playing()) {
-//           setSeconds(sound.seek());
-//           const min = Math.floor(sound.seek() / 60);
-//           const sec = Math.floor(sound.seek() % 60);
-//           setCurrTime({ min, sec });
-//         }
-//       }, 1000);
-//       return () => clearInterval(interval);
-//     }
-//   }, [sound]);
+useEffect(() => {
+    if (duration) {
+      const sec = duration / 1000;
+      const min = Math.floor(sec / 60);
+      const secRemain = Math.floor(sec % 60);
+      setTime({
+        min: min,
+        sec: secRemain
+      });
+    }
+  }, [isPlaying]);
+  useEffect(() => {
+    if (sound) {
+      const interval = setInterval(() => {
+          setSeconds(sound.seek());
+          const min = Math.floor(sound.seek() / 60);
+          const sec = Math.floor(sound.seek() % 60);
+          setCurrTime({ min, sec });
+      }, 1000);
+      return () => clearInterval(interval);
+    }
+  }, [sound]);
 
 
   const handleNextSong = () => {
@@ -215,7 +223,7 @@ export default function MusicPlayerSlider() {
             </Typography>
           </Box>
         </Box>
-        {/* <Slider
+        <Slider
           defaultValue="0"
           max={sound && sound.duration() || 0}
           aria-label="Default" 
@@ -247,7 +255,7 @@ export default function MusicPlayerSlider() {
               opacity: 0.28,
             },
           }}
-        /> */}
+        />
         <Box
           sx={{
             display: 'flex',
@@ -256,8 +264,8 @@ export default function MusicPlayerSlider() {
             mt: -2,
           }}
         >
-          <TinyText>-{time.sec}:{time.sec}</TinyText>
           <TinyText>{currTime.min}:{currTime.sec}</TinyText>
+          <TinyText>{time.min}:{time.sec}</TinyText>
         </Box>
         <Box
           sx={{
