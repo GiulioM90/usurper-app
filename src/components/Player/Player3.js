@@ -205,7 +205,7 @@ export default function MusicPlayerSlider() {
           </CoverImage>
           <Box sx={{ ml: 1.5, minWidth: 0 }}>
             <Typography variant="caption" color="text.secondary" fontWeight={500}>
-              Fottiti
+              Fottiti anche two
             </Typography>
             <Typography noWrap>
               <b>Usurper</b>
