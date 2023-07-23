@@ -20,17 +20,17 @@ const songs = [
   {
     id: 1,
     title: "Usurper",
-    file: require("../assets/usurper.mpeg"),
+    file: require("../assets/usurper.mp3"),
   },
   {
     id: 2,
     title: "Babylon Fell",
-    file: require("../assets/babylonfell.mpeg"),
+    file: require("../assets/babylonfell.mp3"),
   },
   {
     id: 3,
     title: "Cyrcle of the Thyrants",
-    file: require("../assets/cyrcleofthetyrants.mpeg"),
+    file: require("../assets/cyrcleofthetyrants.mp3"),
   },
 ];
 
@@ -105,7 +105,7 @@ export default function MusicPlayerSlider() {
   const [currentSongIndex, setCurrentSongIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const currentSong = songs[currentSongIndex];
-  // const [play, { stop, pause, duration, sound }] = useSound(currentSong.file);
+  // const [play, { stop, pause, duration, sound, seek }] = useSound(currentSong.file);
   const [time, setTime] = useState({ min: '', sec: '' });
   const [currTime, setCurrTime] = useState({ min: '', sec: '' });
   const [seconds, setSeconds] = useState();
